@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "bp-endpoint-search"
+version = "0.1.0"
+description = ""
+authors = ["Fraser Henshaw <fraser@bestpath.io>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+httpx = "^0.25.2"
+python-dotenv = "^1.0.0"
+prettytable = "^3.9.0"
+pydantic = "^2.5.2"
+urllib3 = "^2.1.0"
+pyyaml = "^6.0.1"
+
+
+[tool.poetry.group.dev.dependencies]
+isort = "^5.13.2"
+black = "^23.12.0"
+pytest = "^7.4.3"
+pytest-cov = "^4.1.0"
+
+[tool.poetry.scripts]
+endpoint-search = "bp_endpoint_search.entrypoint:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

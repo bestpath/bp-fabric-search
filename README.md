@@ -51,7 +51,7 @@ endpoint-search node --id 101
 ```
 ## Search by MAC
 ```bash
-poetry run endpoint-search mac -m 00:50:56:85:6F:F9
+endpoint-search mac -m 00:50:56:85:6F:F9
 ```
 
 ## Search by Network / IP

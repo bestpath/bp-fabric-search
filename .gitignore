@@ -48,3 +48,6 @@ poetry.toml
 
 # Log Files
 *.log
+
+# Inventory File
+inventory.yml

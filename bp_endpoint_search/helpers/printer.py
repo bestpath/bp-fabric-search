@@ -2,7 +2,7 @@ from prettytable import PrettyTable
 
 
 def build_table_row(host: str, resp_entry: dict) -> tuple:
-    """_summary_
+    """build out table frow for endpoint search data
 
     Args:
         host (str): the hostname from the query

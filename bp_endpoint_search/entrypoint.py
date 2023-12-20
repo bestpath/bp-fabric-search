@@ -117,6 +117,14 @@ def parse_args(args) -> ArgumentParser:
         help="Prefix ID to query",
     )
 
+    parser_route.add_argument(
+        "--vrf",
+        dest="vrf",
+        type=str,
+        required=False,
+        help="Filter route search by VRF",
+    )
+
     return parser.parse_args(args)
 
 

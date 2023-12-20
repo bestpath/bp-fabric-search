@@ -130,5 +130,8 @@ def build_query(args: ArgumentParser) -> str:
     # Handle Route search
     if args.subparser_name == "route":
         logger.info("Building route search query")
-        query = f'query-target-filter=and(wcard(uribv4Route.prefix,"{args.prefix}"))'
-        return f"/node/class/uribv4Route.json?{query}&rsp-subtree=children&rsp-subtree-class=uribv4Nexthop"
+        if args.vrf:
+            query = f'query-target-filter=and(wcard(uribv4Route.prefix,"{args.prefix}"))&rsp-subtree-filter=and(wcard(uribv4Nexthop.vrf,"{args.vrf}"))'
+        else:
+            query = f'query-target-filter=and(wcard(uribv4Route.prefix,"{args.prefix}"))'
+        return f"/node/class/uribv4Route.json?{query}&rsp-subtree=children&rsp-subtree-class=uribv4Nexthop&rsp-subtree-include=required"

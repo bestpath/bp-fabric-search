@@ -273,7 +273,8 @@ def print_table(data: list, query: str, time_taken: str) -> None:
         )
 
     print("\n")
-    print(f"Skipped Hosts: {', '.join(skipped_hosts)}")
+    if skipped_hosts:
+      print(f"Skipped Hosts: {', '.join(skipped_hosts)}")
     print(f"Query: {query}")
     print(f"Time taken: {time_taken} seconds.")
     print("\n")

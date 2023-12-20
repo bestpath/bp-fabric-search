@@ -52,12 +52,12 @@ async def build_sessions(item: InventoryItem, username: str, password: str) -> N
     item.client = client
 
 
-async def query_client_endpoints(item: InventoryItem, query_params: AnyStr) -> dict:
-    """run a query against the fvCEp class on the APIC
+async def query_clients(item: InventoryItem, query: AnyStr) -> dict:
+    """run a query against the APIC
 
     Args:
         item (InventoryItem): Generated inventory item for host loaded from inventory.yml file.
-        query_params (AnyStr): the query parameters to run against the APIC
+        query (AnyStr): the query parameters to run against the APIC
 
     Returns:
         dict: the JSON response object from the APIC
@@ -70,10 +70,7 @@ async def query_client_endpoints(item: InventoryItem, query_params: AnyStr) -> d
         return dict(host=item.name, resp=None)
     logger.info(f"Running endpoint query against host: {item.name}")
     try:
-        # Example Query: 'query-target-filter=and(wcard(fvCEp.dn,"uni/tn\-FRASER\-LAB/"),ne(fvCEp.bdDn, ""),eq(fvCEp.baseEpgDn, ""))'
-        resp = await item.client.get(
-            f"/node/class/fvCEp.json?{query_params}&rsp-subtree=full&rsp-subtree-class=fvIp,fvRsToVm,fvRsVm,fvRsHyper,tagTagDef,fvRsCEpToPathEp,fvPrimaryEncap,fvRsToEpMacTag&rsp-subtree-include=required"
-        )
+        resp = await item.client.get(query)
         logger.debug(f"Requested URL: {resp.request.url}")
         logger.debug(f"Response Code: {resp.status_code}")
         logger.debug(json.dumps(resp.json(), indent=2))
@@ -104,7 +101,8 @@ def build_query(args: ArgumentParser) -> str:
         q_match = "eq"
         if args.partial_match:
             q_match = "wcard"
-        return f'query-target-filter=and({q_match}(fvCEp.mac,"{args.mac_address}"))'
+        query = f'query-target-filter=and({q_match}(fvCEp.mac,"{args.mac_address}"))'
+        return f"/node/class/fvCEp.json?{query}&rsp-subtree=full&rsp-subtree-class=fvIp,fvRsToVm,fvRsVm,fvRsHyper,tagTagDef,fvRsCEpToPathEp,fvPrimaryEncap,fvRsToEpMacTag&rsp-subtree-include=required"
 
     # Handle IP search
     if args.subparser_name == "ip":
@@ -112,13 +110,25 @@ def build_query(args: ArgumentParser) -> str:
 
         if args.ip_address:
             if args.partial_match:
-                return f'rsp-subtree-filter=and(wcard(fvIp.dn,"{args.ip_address}"))'
+                query = f'rsp-subtree-filter=and(wcard(fvIp.dn,"{args.ip_address}"))'
+                return f"/node/class/fvCEp.json?{query}&rsp-subtree=full&rsp-subtree-class=fvIp,fvRsToVm,fvRsVm,fvRsHyper,tagTagDef,fvRsCEpToPathEp,fvPrimaryEncap,fvRsToEpMacTag&rsp-subtree-include=required"
+
             else:
-                return f'rsp-subtree-filter=eq(fvIp.addr,"{args.ip_address}")'
+                query = f'rsp-subtree-filter=eq(fvIp.addr,"{args.ip_address}")'
+                return f"/node/class/fvCEp.json?{query}&rsp-subtree=full&rsp-subtree-class=fvIp,fvRsToVm,fvRsVm,fvRsHyper,tagTagDef,fvRsCEpToPathEp,fvPrimaryEncap,fvRsToEpMacTag&rsp-subtree-include=required"
+
         elif args.ip_network:
-            return f'rsp-subtree-filter=and(wcard(fvIp.addr,"{args.ip_network}"))'
+            query = f'rsp-subtree-filter=and(wcard(fvIp.addr,"{args.ip_network}"))'
+            return f"/node/class/fvCEp.json?{query}&rsp-subtree=full&rsp-subtree-class=fvIp,fvRsToVm,fvRsVm,fvRsHyper,tagTagDef,fvRsCEpToPathEp,fvPrimaryEncap,fvRsToEpMacTag&rsp-subtree-include=required"
 
     # Handle Node search
     if args.subparser_name == "node":
         logger.info("Building Node search query")
-        return f'rsp-subtree-filter=and(wcard(fvRsCEpToPathEp.tDn,"{args.node}"))'
+        query = f'rsp-subtree-filter=and(wcard(fvRsCEpToPathEp.tDn,"{args.node}"))'
+        return f"/node/class/fvCEp.json?{query}&rsp-subtree=full&rsp-subtree-class=fvIp,fvRsToVm,fvRsVm,fvRsHyper,tagTagDef,fvRsCEpToPathEp,fvPrimaryEncap,fvRsToEpMacTag&rsp-subtree-include=required"
+
+    # Handle Route search
+    if args.subparser_name == "route":
+        logger.info("Building route search query")
+        query = f'query-target-filter=and(wcard(uribv4Route.prefix,"{args.prefix}"))'
+        return f"/node/class/uribv4Route.json?{query}&rsp-subtree=children&rsp-subtree-class=uribv4Nexthop"

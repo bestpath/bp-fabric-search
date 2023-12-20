@@ -5,10 +5,11 @@ import time
 from argparse import ArgumentParser
 
 from bp_endpoint_search.helpers.apic import (build_query, build_sessions,
-                                             query_client_endpoints)
+                                             query_clients)
 from bp_endpoint_search.helpers.config import SETTINGS
 from bp_endpoint_search.helpers.logging import configure_logger, logger
-from bp_endpoint_search.helpers.printer import print_table
+from bp_endpoint_search.helpers.printer import (print_endpoint_table,
+                                                print_route_table)
 from bp_endpoint_search.inventory import Inventory
 
 
@@ -102,6 +103,20 @@ def parse_args(args) -> ArgumentParser:
         help="Node ID to query",
     )
 
+    # create the parser for the "route" command
+    parser_route = subparsers.add_parser(
+        "route",
+        parents=[parent_log_parser],
+        help="Search routes based on network",
+    )
+    parser_route.add_argument(
+        "--prefix",
+        dest="prefix",
+        type=str,
+        required=True,
+        help="Prefix ID to query",
+    )
+
     return parser.parse_args(args)
 
 
@@ -124,9 +139,9 @@ async def start(args: ArgumentParser):
     query = build_query(args=args)
 
     query_tasks = [
-        query_client_endpoints(
+        query_clients(
             item=item,
-            query_params=query,
+            query=query,
         )
         for item in inventory.items
     ]
@@ -141,7 +156,10 @@ async def start(args: ArgumentParser):
     logger.debug(f"Time taken: {time_taken} seconds.")
 
     # Print the table of responses
-    print_table(data=query_resp, query=query, time_taken=time_taken)
+    if args.subparser_name in ["mac", "ip", "node"]:
+        print_endpoint_table(data=query_resp, query=query, time_taken=time_taken)
+    elif args.subparser_name in ["route"]:
+        print_route_table(data=query_resp, query=query, time_taken=time_taken)
 
 
 def main():

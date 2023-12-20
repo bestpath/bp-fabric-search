@@ -1,7 +1,7 @@
 from prettytable import PrettyTable
 
 
-def build_table_row(host: str, resp_entry: dict) -> tuple:
+def build_endpoint_table_row(host: str, resp_entry: dict) -> tuple:
     """build out table frow for endpoint search data
 
     Args:
@@ -76,7 +76,49 @@ def build_table_row(host: str, resp_entry: dict) -> tuple:
     )
 
 
-def print_table(data: list, query: str, time_taken: str) -> None:
+def build_route_table_row(host: str, resp_entry: dict) -> tuple:
+    """build out table frow for route search data
+
+    Args:
+        host (str): the hostname from the query
+        resp_entry (dict): an uribv4Route line entry from the resp data
+
+    Returns:
+        tuple: return a tuple of the table row to be added
+    """
+
+    # Set Default Data
+    route = resp_entry["uribv4Route"]["attributes"]["prefix"]
+    metric = []
+    pref = []
+    node = resp_entry["uribv4Route"]["attributes"]["dn"].split("/")[2].split("-")[-1]
+    next_hop = []
+    interface = []
+    route_type = []
+    vrf = []
+
+    for next_hops in resp_entry["uribv4Route"]["children"]:
+        next_hop.append(next_hops["uribv4Nexthop"]["attributes"]["addr"])
+        interface.append(next_hops["uribv4Nexthop"]["attributes"]["if"])
+        metric.append(next_hops["uribv4Nexthop"]["attributes"]["metric"])
+        pref.append(next_hops["uribv4Nexthop"]["attributes"]["pref"])
+        route_type.append(next_hops["uribv4Nexthop"]["attributes"]["routeType"])
+        vrf.append(next_hops["uribv4Nexthop"]["attributes"]["vrf"])
+
+    return (
+        host,
+        route,
+        "\n".join(metric),
+        "\n".join(pref),
+        node,
+        "\n".join(next_hop),
+        "\n".join(interface),
+        "\n".join(route_type),
+        "\n".join(vrf),
+    )
+
+
+def print_endpoint_table(data: list, query: str, time_taken: str) -> None:
     """Prettyprint the responses to the users screen
 
     Example Item from the data:
@@ -267,14 +309,61 @@ def print_table(data: list, query: str, time_taken: str) -> None:
 
         table.add_rows(
             [
-                build_table_row(host=host_resp["host"], resp_entry=entry)
+                build_endpoint_table_row(host=host_resp["host"], resp_entry=entry)
                 for entry in host_resp["resp"]["imdata"]
             ]
         )
 
     print("\n")
     if skipped_hosts:
-      print(f"Skipped Hosts: {', '.join(skipped_hosts)}")
+        print(f"Skipped Hosts: {', '.join(skipped_hosts)}")
+    print(f"Query: {query}")
+    print(f"Time taken: {time_taken} seconds.")
+    print("\n")
+    print(table)
+
+
+def print_route_table(data: list, query: str, time_taken: str) -> None:
+    """Prettyprint the responses to the users screen
+
+    Example Item from the data:
+
+
+
+    Args:
+        data (list): list of apic responses
+    """
+
+    table = PrettyTable()
+
+    table.field_names = [
+        "Host",
+        "Route",
+        "Metric",
+        "Pref",
+        "Node",
+        "Next Hop",
+        "Interface",
+        "Type",
+        "Vrf",
+    ]
+    skipped_hosts = []
+
+    for host_resp in data:
+        if host_resp["resp"] is None:
+            skipped_hosts.append(host_resp["host"])
+            continue
+
+        table.add_rows(
+            [
+                build_route_table_row(host=host_resp["host"], resp_entry=entry)
+                for entry in host_resp["resp"]["imdata"]
+            ]
+        )
+
+    print("\n")
+    if skipped_hosts:
+        print(f"Skipped Hosts: {', '.join(skipped_hosts)}")
     print(f"Query: {query}")
     print(f"Time taken: {time_taken} seconds.")
     print("\n")

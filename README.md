@@ -1,19 +1,25 @@
-# Endpoint Search
+# Fabric Search
 
-Quickly search for endpoints across a large number of APIC's and display the results in a table.
+Quickly search endpoints and routing tables across a large number of APIC's and display the results in a table.
 
 Endpoints can be searched using the following criteria:
+
 - MAC Address
 - IP Address
 - IP Network
 - Node
+
+Routex can be search using the following criteria:
+
+- Prefix
+- VRF
 
 It is also possible to do searches based on partial data. for example the last 4 characters of a MAC address.
 
 # Installation
 
 ```bash
-pip install bp-endpoint-search
+pip install bp-fabric-search
 ```
 
 # Usage
@@ -32,7 +38,7 @@ An simple inventory file is used to store a list of APIC's to search. This is a 
 
 ## Environment Variables
 
-The following environment variables are required for the script to run, these can be set using 
+The following environment variables are required for the script to run, these can be set using
 the `EXPORT` command or loaded in at runtime from a .env file.
 
 ```env
@@ -45,27 +51,34 @@ INVENTORY_PASSWORD="PASSWORD"
 INVENTORY_PATH=path/to/my/inventory.yml
 ```
 
-## Search by Node
-```bash
-endpoint-search node --id 101
-```
-## Search by MAC
-```bash
-endpoint-search mac -m 00:50:56:85:6F:F9
-```
+## Endpoint Searches
 
-## Search by Network / IP
-```bash
-endpoint-search ip --network 10.96.0.0/16
-```
+### Search by Node
 
 ```bash
-endpoint-search ip --host 10.96.252.1
+fabric-search node --id 101
+```
+
+### Search by MAC
+
+```bash
+fabric-search mac -m 00:50:56:85:6F:F9
+```
+
+### Search by Network / IP
+
+```bash
+fabric-search ip --network 10.96.0.0/16
+```
+
+```bash
+fabric-search ip --host 10.96.252.1
 ```
 
 ## Result
+
 ```bash
-Skipped Hosts: 
+Skipped Hosts:
 Time taken: 0.20 seconds.
 
 
@@ -75,4 +88,44 @@ Time taken: 0.20 seconds.
 | APIC-1 | 00:50:56:85:EF:89 | 10.96.252.102 | LSEG-TENANT-2 |     |  1411 | 101  |  eth1/10  | learned |
 | APIC-1 | 00:50:56:85:EF:89 |  10.96.252.86 | LSEG-NET-SVCS |     |  1413 | 101  |  eth1/10  | learned |
 +--------+-------------------+---------------+---------------+-----+-------+------+-----------+---------+
+```
+
+## Route Searches
+
+### Search by Prefix
+
+```bash
+fabric-search route --prefix 10.96.0.0/24
+```
+
+### Search by Prefix and VRF
+
+```bash
+fabric-search route --prefix 10.96.0.0/24 --vrf FRASER-LAB:FRASER-LAB
+```
+
+### Search by exact prefix
+
+```bash
+fabric-search route --prefix 10.96.0.0/24 --exact
+```
+
+## Result
+
+```bash
+Skipped Hosts: UKLDN-DC2
+Query Type: route
+Time taken: 5.13 seconds.
+
+
++-----------+---------------+-------+--------+------+------------------+------+-------------+-----------------------+
+|    Host   |     Route     |  Type | Metric | Pref |     Next Hop     | Node |  Interface  |          Vrf          |
++-----------+---------------+-------+--------+------+------------------+------+-------------+-----------------------+
+| UKLDN-DC1 |   0.0.0.0/0   |  ebgp |   0    |  20  | 10.96.252.255/32 | 102  | unspecified | FRASER-LAB:FRASER-LAB |
+| UKLDN-DC1 | 10.96.0.30/32 | local |   0    |  0   |  10.96.0.30/32   | 102  |    vlan25   | FRASER-LAB:FRASER-LAB |
+| UKLDN-DC1 | 10.96.0.62/32 | local |   0    |  0   |  10.96.0.62/32   | 102  |    vlan23   | FRASER-LAB:FRASER-LAB |
+| UKLDN-DC1 |   0.0.0.0/0   |  ebgp |   0    |  20  | 10.96.252.253/32 | 101  | unspecified | FRASER-LAB:FRASER-LAB |
+| UKLDN-DC1 | 10.96.0.30/32 | local |   0    |  0   |  10.96.0.30/32   | 101  |    vlan23   | FRASER-LAB:FRASER-LAB |
+| UKLDN-DC1 | 10.96.0.62/32 | local |   0    |  0   |  10.96.0.62/32   | 101  |    vlan29   | FRASER-LAB:FRASER-LAB |
++-----------+---------------+-------+--------+------+------------------+------+-------------+-----------------------+
 ```

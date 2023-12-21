@@ -108,12 +108,12 @@ def build_route_table_row(host: str, resp_entry: dict) -> tuple:
     return (
         host,
         route,
+        "\n".join(route_type),
         "\n".join(metric),
         "\n".join(pref),
-        node,
         "\n".join(next_hop),
+        node,
         "\n".join(interface),
-        "\n".join(route_type),
         "\n".join(vrf),
     )
 
@@ -317,7 +317,7 @@ def print_endpoint_table(data: list, query: str, time_taken: str) -> None:
     print("\n")
     if skipped_hosts:
         print(f"Skipped Hosts: {', '.join(skipped_hosts)}")
-    print(f"Query: {query}")
+    print(f"Query Type: {query.subparser_name}")
     print(f"Time taken: {time_taken} seconds.")
     print("\n")
     print(table)
@@ -339,12 +339,12 @@ def print_route_table(data: list, query: str, time_taken: str) -> None:
     table.field_names = [
         "Host",
         "Route",
+        "Type",
         "Metric",
         "Pref",
-        "Node",
         "Next Hop",
+        "Node",
         "Interface",
-        "Type",
         "Vrf",
     ]
     skipped_hosts = []
@@ -364,7 +364,7 @@ def print_route_table(data: list, query: str, time_taken: str) -> None:
     print("\n")
     if skipped_hosts:
         print(f"Skipped Hosts: {', '.join(skipped_hosts)}")
-    print(f"Query: {query}")
+    print(f"Query Type: {query.subparser_name}")
     print(f"Time taken: {time_taken} seconds.")
     print("\n")
     print(table)

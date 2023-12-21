@@ -5,8 +5,8 @@ import yaml
 from httpx import AsyncClient
 from pydantic import BaseModel, HttpUrl, TypeAdapter
 
-from bp_endpoint_search.helpers.config import SETTINGS
-from bp_endpoint_search.helpers.logging import logger
+from bp_fabric_search.helpers.config import SETTINGS
+from bp_fabric_search.helpers.logging import logger
 
 
 class InventoryItem(BaseModel):

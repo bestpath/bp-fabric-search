@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "bp-endpoint-search"
+name = "bp-fabric-search"
 version = "0.1.0"
 description = ""
 authors = ["Fraser Henshaw <fraser@bestpath.io>"]
@@ -22,7 +22,7 @@ pytest = "^7.4.3"
 pytest-cov = "^4.1.0"
 
 [tool.poetry.scripts]
-endpoint-search = "bp_endpoint_search.entrypoint:main"
+fabric-search = "bp_fabric_search.entrypoint:main"
 
 [build-system]
 requires = ["poetry-core"]

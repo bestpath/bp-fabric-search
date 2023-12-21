@@ -4,13 +4,13 @@ import sys
 import time
 from argparse import ArgumentParser
 
-from bp_endpoint_search.helpers.apic import (build_query, build_sessions,
-                                             query_clients)
-from bp_endpoint_search.helpers.config import SETTINGS
-from bp_endpoint_search.helpers.logging import configure_logger, logger
-from bp_endpoint_search.helpers.printer import (print_endpoint_table,
-                                                print_route_table)
-from bp_endpoint_search.inventory import Inventory
+from bp_fabric_search.helpers.apic import (build_query, build_sessions,
+                                           query_clients)
+from bp_fabric_search.helpers.config import SETTINGS
+from bp_fabric_search.helpers.logging import configure_logger, logger
+from bp_fabric_search.helpers.printer import (print_endpoint_table,
+                                              print_route_table)
+from bp_fabric_search.inventory import Inventory
 
 
 def parse_args(args) -> ArgumentParser:
@@ -125,6 +125,14 @@ def parse_args(args) -> ArgumentParser:
         help="Filter route search by VRF",
     )
 
+    parser_route.add_argument(
+        "--exact",
+        dest="exact",
+        action="store_true",
+        required=False,
+        help="Whether the prefix should be an exact match",
+    )
+
     return parser.parse_args(args)
 
 
@@ -165,9 +173,9 @@ async def start(args: ArgumentParser):
 
     # Print the table of responses
     if args.subparser_name in ["mac", "ip", "node"]:
-        print_endpoint_table(data=query_resp, query=query, time_taken=time_taken)
+        print_endpoint_table(data=query_resp, query=args, time_taken=time_taken)
     elif args.subparser_name in ["route"]:
-        print_route_table(data=query_resp, query=query, time_taken=time_taken)
+        print_route_table(data=query_resp, query=args, time_taken=time_taken)
 
 
 def main():

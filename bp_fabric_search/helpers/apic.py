@@ -5,8 +5,8 @@ from typing import AnyStr
 import urllib3
 from httpx import AsyncClient
 
-from bp_endpoint_search.helpers.logging import logger
-from bp_endpoint_search.inventory import InventoryItem
+from bp_fabric_search.helpers.logging import logger
+from bp_fabric_search.inventory import InventoryItem
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -129,9 +129,17 @@ def build_query(args: ArgumentParser) -> str:
 
     # Handle Route search
     if args.subparser_name == "route":
+        # handle 0.0.0.0/0 prefix
+        q_match = "wcard"
+        if args.prefix == "0.0.0.0/0":
+            q_match = "eq"
+        # handle exact matches
+        if args.exact:
+            q_match = "eq"
+
         logger.info("Building route search query")
         if args.vrf:
-            query = f'query-target-filter=and(wcard(uribv4Route.prefix,"{args.prefix}"))&rsp-subtree-filter=and(wcard(uribv4Nexthop.vrf,"{args.vrf}"))'
+            query = f'query-target-filter=and({q_match}(uribv4Route.prefix,"{args.prefix}"))&rsp-subtree-filter=and(wcard(uribv4Nexthop.vrf,"{args.vrf}"))'
         else:
-            query = f'query-target-filter=and(wcard(uribv4Route.prefix,"{args.prefix}"))'
+            query = f'query-target-filter=and({q_match}(uribv4Route.prefix,"{args.prefix}"))'
         return f"/node/class/uribv4Route.json?{query}&rsp-subtree=children&rsp-subtree-class=uribv4Nexthop&rsp-subtree-include=required"

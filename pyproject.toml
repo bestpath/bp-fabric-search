@@ -1,12 +1,12 @@
 [tool.poetry]
 name = "bp-fabric-search"
-version = "0.1.1"
+version = "0.1.2"
 description = "Python based search utility to query multiple Cisco ACI fabrics at once."
 authors = ["Fraser Henshaw <fraser@bestpath.io>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.9.5"
 httpx = "^0.25.2"
 python-dotenv = "^1.0.0"
 prettytable = "^3.9.0"

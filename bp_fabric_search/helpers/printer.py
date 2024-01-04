@@ -1,4 +1,5 @@
 from prettytable import PrettyTable
+from bp_fabric_search.helpers.logging import logger
 
 
 def build_endpoint_table_row(host: str, resp_entry: dict) -> tuple:
@@ -61,8 +62,12 @@ def build_endpoint_table_row(host: str, resp_entry: dict) -> tuple:
             resp_entry["fvCEp"]["attributes"]["fabricPathDn"].split("[")[-1].strip("]")
         )
     if len(node) == 0:
-        node.append(resp_entry["fvCEp"]["attributes"]["fabricPathDn"].split("/")[2][6:])
-
+        try:
+          node.append(resp_entry["fvCEp"]["attributes"]["fabricPathDn"].split("/")[2][6:])
+        except IndexError as e:
+            # unable to add node
+            logger.debug("Unable to add node")
+            logger.debug(e)
     return (
         host,
         mac,

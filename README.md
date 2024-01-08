@@ -30,10 +30,10 @@ An simple inventory file is used to store a list of APIC's to search. This is a 
 
 ```yaml
 ---
-- name: UKLDN-DC1
-  host: https://10.96.255.1
-- name: UKLDN-DC2
-  host: https://10.98.255.1
+- name: FABRIC-1
+  host: https://10.1.0.1
+- name: FABRIC-2
+  host: https://10.2.0.1
 ```
 
 ## Environment Variables
@@ -82,12 +82,12 @@ Skipped Hosts:
 Time taken: 0.20 seconds.
 
 
-+--------+-------------------+---------------+---------------+-----+-------+------+-----------+---------+
-|  Host  |        MAC        |       IP      |     Tenant    | EPG | Encap | Node | Interface |  Source |
-+--------+-------------------+---------------+---------------+-----+-------+------+-----------+---------+
-| APIC-1 | 00:50:56:85:EF:89 | 10.96.252.102 | LSEG-TENANT-2 |     |  1411 | 101  |  eth1/10  | learned |
-| APIC-1 | 00:50:56:85:EF:89 |  10.96.252.86 | LSEG-NET-SVCS |     |  1413 | 101  |  eth1/10  | learned |
-+--------+-------------------+---------------+---------------+-----+-------+------+-----------+---------+
++----------+-------------------+---------------+---------------+-----+-------+------+-----------+---------+
+|  Host    |        MAC        |       IP      |     Tenant    | EPG | Encap | Node | Interface |  Source |
++----------+-------------------+---------------+---------------+-----+-------+------+-----------+---------+
+| FABRIC-1 | 00:50:56:85:EF:89 | 10.96.252.102 | LSEG-TENANT-2 |     |  1411 | 101  |  eth1/10  | learned |
+| FABRIC-1 | 00:50:56:85:EF:89 |  10.96.252.86 | LSEG-NET-SVCS |     |  1413 | 101  |  eth1/10  | learned |
++----------+-------------------+---------------+---------------+-----+-------+------+-----------+---------+
 ```
 
 ## Route Searches
@@ -113,7 +113,7 @@ fabric-search route --prefix 10.96.0.0/24 --exact
 ## Result
 
 ```bash
-Skipped Hosts: UKLDN-DC2
+Skipped Hosts: FABRIC-2
 Query Type: route
 Time taken: 5.13 seconds.
 
@@ -121,11 +121,11 @@ Time taken: 5.13 seconds.
 +-----------+---------------+-------+--------+------+------------------+------+-------------+-----------------------+
 |    Host   |     Route     |  Type | Metric | Pref |     Next Hop     | Node |  Interface  |          Vrf          |
 +-----------+---------------+-------+--------+------+------------------+------+-------------+-----------------------+
-| UKLDN-DC1 |   0.0.0.0/0   |  ebgp |   0    |  20  | 10.96.252.255/32 | 102  | unspecified | FRASER-LAB:FRASER-LAB |
-| UKLDN-DC1 | 10.96.0.30/32 | local |   0    |  0   |  10.96.0.30/32   | 102  |    vlan25   | FRASER-LAB:FRASER-LAB |
-| UKLDN-DC1 | 10.96.0.62/32 | local |   0    |  0   |  10.96.0.62/32   | 102  |    vlan23   | FRASER-LAB:FRASER-LAB |
-| UKLDN-DC1 |   0.0.0.0/0   |  ebgp |   0    |  20  | 10.96.252.253/32 | 101  | unspecified | FRASER-LAB:FRASER-LAB |
-| UKLDN-DC1 | 10.96.0.30/32 | local |   0    |  0   |  10.96.0.30/32   | 101  |    vlan23   | FRASER-LAB:FRASER-LAB |
-| UKLDN-DC1 | 10.96.0.62/32 | local |   0    |  0   |  10.96.0.62/32   | 101  |    vlan29   | FRASER-LAB:FRASER-LAB |
+| FABRIC-1  |   0.0.0.0/0   |  ebgp |   0    |  20  | 10.96.252.255/32 | 102  | unspecified | FRASER-LAB:FRASER-LAB |
+| FABRIC-1  | 10.96.0.30/32 | local |   0    |  0   |  10.96.0.30/32   | 102  |    vlan25   | FRASER-LAB:FRASER-LAB |
+| FABRIC-1  | 10.96.0.62/32 | local |   0    |  0   |  10.96.0.62/32   | 102  |    vlan23   | FRASER-LAB:FRASER-LAB |
+| FABRIC-1  |   0.0.0.0/0   |  ebgp |   0    |  20  | 10.96.252.253/32 | 101  | unspecified | FRASER-LAB:FRASER-LAB |
+| FABRIC-1  | 10.96.0.30/32 | local |   0    |  0   |  10.96.0.30/32   | 101  |    vlan23   | FRASER-LAB:FRASER-LAB |
+| FABRIC-1  | 10.96.0.62/32 | local |   0    |  0   |  10.96.0.62/32   | 101  |    vlan29   | FRASER-LAB:FRASER-LAB |
 +-----------+---------------+-------+--------+------+------------------+------+-------------+-----------------------+
 ```

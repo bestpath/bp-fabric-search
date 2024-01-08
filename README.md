@@ -9,7 +9,7 @@ Endpoints can be searched using the following criteria:
 - IP Network
 - Node
 
-Routex can be search using the following criteria:
+Route can be search using the following criteria:
 
 - Prefix
 - VRF
@@ -85,8 +85,8 @@ Time taken: 0.20 seconds.
 +----------+-------------------+---------------+---------------+-----+-------+------+-----------+---------+
 |  Host    |        MAC        |       IP      |     Tenant    | EPG | Encap | Node | Interface |  Source |
 +----------+-------------------+---------------+---------------+-----+-------+------+-----------+---------+
-| FABRIC-1 | 00:50:56:85:EF:89 | 10.96.252.102 | LSEG-TENANT-2 |     |  1411 | 101  |  eth1/10  | learned |
-| FABRIC-1 | 00:50:56:85:EF:89 |  10.96.252.86 | LSEG-NET-SVCS |     |  1413 | 101  |  eth1/10  | learned |
+| FABRIC-1 | 00:50:56:85:EF:89 | 10.96.252.102 | CUST-TENANT-2 |     |  1411 | 101  |  eth1/10  | learned |
+| FABRIC-1 | 00:50:56:85:EF:89 |  10.96.252.86 | CUST-NET-SVCS |     |  1413 | 101  |  eth1/10  | learned |
 +----------+-------------------+---------------+---------------+-----+-------+------+-----------+---------+
 ```
 

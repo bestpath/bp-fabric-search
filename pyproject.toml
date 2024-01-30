@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "bp-fabric-search"
-version = "0.1.2"
+version = "0.1.3"
 description = "Python based search utility to query multiple Cisco ACI fabrics at once."
 authors = ["Fraser Henshaw <fraser@bestpath.io>"]
 readme = "README.md"

@@ -1,4 +1,5 @@
 from prettytable import PrettyTable
+
 from bp_fabric_search.helpers.logging import logger
 
 
@@ -50,8 +51,13 @@ def build_endpoint_table_row(host: str, resp_entry: dict) -> tuple:
             )
 
             # Handle VMM that is unknown at IP level
-            if child["fvIp"]["attributes"]["encap"] != "unknown":
-                encap.append(child["fvIp"]["attributes"]["encap"][5:])
+            try:
+                if child["fvIp"]["attributes"]["encap"] != "unknown":
+                    encap.append(child["fvIp"]["attributes"]["encap"][5:])
+            except KeyError:
+                logger.debug("Unable to find encap key at fvIP level")
+                pass
+
     # Overide default encap if none set
     if len(encap) == 0:
         encap.append(resp_entry["fvCEp"]["attributes"]["encap"][5:])
@@ -63,7 +69,9 @@ def build_endpoint_table_row(host: str, resp_entry: dict) -> tuple:
         )
     if len(node) == 0:
         try:
-          node.append(resp_entry["fvCEp"]["attributes"]["fabricPathDn"].split("/")[2][6:])
+            node.append(
+                resp_entry["fvCEp"]["attributes"]["fabricPathDn"].split("/")[2][6:]
+            )
         except IndexError as e:
             # unable to add node
             logger.debug("Unable to add node")
